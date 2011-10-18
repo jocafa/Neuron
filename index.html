@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Neuron</title>
+		<link rel="stylesheet" href="Support/Jasmine/jasmine.css" type="text/css">
+		<script src="Support/Jasmine/jasmine.js"></script>
+		<script src="Support/Jasmine/jasmine-html.js"></script>
+		<script src="Support/JSLitmus.js"></script>
+
+		<script type="text/javascript">
+			curl = {
+			};
+		</script>
+
+		<script src="Support/curl.js"></script>
+
+		<script type="text/javascript">
+			(function () {
+				var jasmineEnv = jasmine.getEnv();
+				jasmineEnv.updateInterval = 1000;
+
+				var trivialReporter = new jasmine.TrivialReporter();
+				jasmineEnv.addReporter(trivialReporter);
+
+				jasmineEnv.specFilter = function (spec) {
+					return trivialReporter.specFilter(spec);
+				};
+
+				curl(['test', 'bench'], function () {
+					jasmineEnv.execute();
+				});
+			})();
+
+		</script>
+
+		<style type="text/css">
+			#jslitmus {
+				position: absolute;
+				bottom: 10px;
+				right: 10px;
+				background-color: white;
+			}
+			#jslitmus:before {
+				display: block;
+				position: absolute;
+				top: 0px;
+				left: 0px;
+				right: 0px;
+				height: 20px;
+				margin-top: -20px;
+				content: 'JSLitmus';
+				font-size: 14px;
+				font-weight: bold;
+			}
+		</style>
+	</head>
+	<body>
+	</body>
+</html>
