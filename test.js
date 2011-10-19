@@ -1,4 +1,4 @@
-define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
+define(['Neuron'], function (Neuron) {
 	// Thing
 	function Thing (label) {
 		Neuron.call(this, arguments);
@@ -14,8 +14,12 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 	};
 
 	Thing.prototype.stim = function () {
-		var imp = new Impulse('something', {foo: 'bar'});
-		this.emit(imp);
+		this.emit({
+			type: 'something',
+			payload: {
+				foo: 'bar'
+			}
+		});
 	};
 
 
@@ -103,7 +107,7 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 				});
 			});
 
-			it('a -> (b->d->f, c->e->f) = b, c, d, e, f, f', function () {
+			it('a -> (b->d->f, c->e->f) = b, c, d, e, f', function () {
 				var a = new Thing, b = new Thing, c = new Thing, d = new Thing, e = new Thing, f = new Thing;
 
 				a.influence(b);
@@ -121,12 +125,12 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 						c.responses == 1 &&
 						d.responses == 1 &&
 						e.responses == 1 &&
-						f.responses == 2
+						f.responses == 1
 					);
 				});
 			});
 
-			it('a -> (b->d->f->a, c->e->f->a) = b, c, d, e, f, f', function () {
+			it('a -> (b->d->f->a, c->e->f->a) = b, c, d, e, f', function () {
 				var a = new Thing, b = new Thing, c = new Thing, d = new Thing, e = new Thing, f = new Thing;
 
 				a.influence(b);
@@ -145,12 +149,12 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 						c.responses == 1 &&
 						d.responses == 1 &&
 						e.responses == 1 &&
-						f.responses == 2
+						f.responses == 1
 					);
 				});
 			});
 
-			it('a -> (b->d, c->d), d -> e = b, c, d, d, e, e', function () {
+			it('a -> (b->d, c->d), d -> e = b, c, d, e', function () {
 				var a = new Thing, b = new Thing, c = new Thing, d = new Thing, e = new Thing;
 
 				a.influence(b);
@@ -165,8 +169,8 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 					return (
 						b.responses == 1 &&
 						c.responses == 1 &&
-						d.responses == 2 &&
-						e.responses == 2
+						d.responses == 1 &&
+						e.responses == 1
 					);
 				});
 			});

@@ -1,5 +1,5 @@
 /* Neuron */
-define(['Impulse'], function (Impulse) {
+define(function () {
 	var cid = 0;
 
 	function __bind (fn, obj) {
@@ -8,29 +8,11 @@ define(['Impulse'], function (Impulse) {
 		}
 	}
 
-	var schedule;
-
-	try {
-		schedule = process.nextTick;
-	} catch (e) {
-		schedule = (function () {
-			var queue = [];
-			window.addEventListener('message', function (event) {
-				if (event.source == window && event.data == 'NeuronTick' && queue.length > 0) {
-					(queue.shift())();
-				}
-			});
-
-			return function (fn) {
-				queue.push(fn);
-				window.postMessage('NeuronTick', window.location.origin);
-			};
-		})();
-	}
-
 	function Neuron () {
 		this.cid = this.constructor.name + '-' + cid++;
 		this.axonTerminals = {};
+		this.nucleus = document.createElement('div');
+		this.nucleus.addEventListener('impulse', __bind(this.handleImpulseEvent, this));
 
 		this.bindResponders();
 	}
@@ -43,34 +25,36 @@ define(['Impulse'], function (Impulse) {
 		}
 	};
 
-	Neuron.prototype.emit = function (impulse) {
-		// Tell all the neurons connected to the axon terminals to absorb
-		// an impulse
-
-		if (Object.keys(this.axonTerminals).length > 0) {
-			var responderKey = 'respondTo' + impulse.type.replace(/./, function (c) {
+	Neuron.prototype.handleImpulseEvent = function (event) {
+		if (!event.impulse.log[this.cid]) {
+			var responderKey = 'respondTo' + event.impulse.type.replace(/./, function (c) {
 				return c.toUpperCase();
 			});
 
-			impulse.log[this.cid] = true;
+			event.impulse.log[this.cid] = true;
 
-			for (var k in this.axonTerminals) if (this.axonTerminals.hasOwnProperty(k)) {
-				var terminal = this.axonTerminals[k];
+			if (typeof this[responderKey] == 'function') {
+				this[responderKey](event.impulse.payload);
+			}
 
-				if (
-					!(terminal.cid in impulse.log) &&
-					responderKey in terminal &&
-					typeof terminal[responderKey] == 'function'
-				) {
-					(function (self, impulse, terminal, responder) {
-						schedule(function () {
-							responder(impulse);
-							if (impulse.active) {
-								impulse.log[self.cid] = true;
-								terminal.emit(impulse.clone());
-							}
-						});
-					})(this, impulse.clone(), terminal, terminal[responderKey]);
+			this.emit(event.impulse);
+		}
+	};
+
+	Neuron.prototype.emit = function (impulse) {
+		var synapses = Object.keys(this.axonTerminals);
+		var l = synapses.length;
+		if (l) {
+			var evt = document.createEvent('Event');
+			evt.initEvent('impulse', true, false);
+			evt.impulse = impulse;
+			evt.impulse.log = evt.impulse.log || {};
+			evt.impulse.log[this.cid] = true;
+
+			for (var i = 0; i < l; i++) {
+				if (!evt.impulse.log[synapses[i]]) {
+					var synapse = this.axonTerminals[synapses[i]];
+					synapse.nucleus.dispatchEvent(evt);
 				}
 			}
 		}
