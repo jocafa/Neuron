@@ -1,21 +1,20 @@
-define(['Neuron'], function (Neuron) {
-	function Thing () {
+define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
+	// Thing
+	function Thing (label) {
 		Neuron.call(this, arguments);
+		this.label = label;
+		this.responses = 0;
 	}
 
 	Thing.prototype = new Neuron;
 	Thing.prototype.constructor = Thing;
 
-	Thing.prototype.stim = function () {
-		this.emit({
-			type: 'something',
-			payload: {
-				foo: 'bar'
-			}
-		});
+	Thing.prototype.respondToSomething = function (imp) {
+		this.responses++;
 	};
 
-	Thing.prototype.respondToSomething = function (imp) {
+	Thing.prototype.stim = function () {
+		this.emit(new Impulse('something', { foo: 'bar' }));
 	};
 
 	(function () {

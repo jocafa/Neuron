@@ -1,4 +1,4 @@
-define(['Neuron'], function (Neuron) {
+define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 	// Thing
 	function Thing (label) {
 		Neuron.call(this, arguments);
@@ -14,12 +14,7 @@ define(['Neuron'], function (Neuron) {
 	};
 
 	Thing.prototype.stim = function () {
-		this.emit({
-			type: 'something',
-			payload: {
-				foo: 'bar'
-			}
-		});
+		this.emit(new Impulse('something', { foo: 'bar' }));
 	};
 
 
