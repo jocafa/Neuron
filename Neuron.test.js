@@ -37,7 +37,7 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 					a.stim();
 				});
 
-				waits(200);
+				waits(100);
 
 				runs(function () {
 					expect(a.respondToSomething).not.toHaveBeenCalled();
@@ -52,7 +52,7 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 
 				waitsFor(function () {
 					return b.responses == 1;
-				}, 1000);
+				});
 			});
 
 			it('a -> b -> c = b, c', function () {

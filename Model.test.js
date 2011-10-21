@@ -10,6 +10,7 @@ define(['Model'], function (Model) {
 			Thing.prototype.constructor = Thing;
 
 			var t = new Thing;
+			console.log(t.toString());
 
 			it('should be an instance of Thing', function () {
 				expect(t instanceof Thing).toBe(true);
@@ -51,14 +52,46 @@ define(['Model'], function (Model) {
 				runs(function () {
 					a.something = true;
 				});
-				waits(200);
+				waits(100);
 				runs(function () {
 					expect(b.respondToChange).toHaveBeenCalled();
 					expect(b.lastImpulse.payload.oldValue).toBe(undefined);
 					expect(b.lastImpulse.payload.newValue).toBe(true);
 				});
-
 			});
+
+			it('should correctly set a value', function () {
+				var a = new Thing;
+				runs(function () {
+					a.something = 'foo';
+				});
+				waits(100);
+				runs(function () {
+					expect(a.something).toBe('foo');
+				});
+			});
+		});
+
+		describe('defining a field with a getter', function () {
+			function Thing(data) {
+				Model.call(this, arguments);
+			}
+			Thing.prototype = new Model;
+			Thing.prototype.constructor = Thing;
+			Model.defineField(Thing, 'something', {
+				get: function () {
+					return 'got-' + this.fields.something;
+				}
+			});
+
+			it('should call the getter function', function () {
+				var a = new Thing;
+				a.something = 'foo';
+				expect(a.something).toBe('got-foo');
+			});
+		});
+
+		describe('defining a field with a setter', function () {
 		});
 	});
 
