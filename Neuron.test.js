@@ -18,7 +18,7 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 	};
 
 
-	// Tests
+	//////////////////////////////////////////////////////////////[ Tests ]////
 	describe('Neuron', function () {
 		it('should be able to be subclassed', function () {
 			var a = new Thing;
@@ -171,4 +171,32 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 			});
 		});
 	});
+
+	/////////////////////////////////////////////////////////[ Benchmarks ]////
+	(function () {
+		var a = new Thing, b = new Thing;
+		a.influence(b);
+		JSLitmus.test('Neuron emission', function (count) {
+			while (count--) {
+				a.stim();
+			}
+		});
+	})();
+
+	(function () {
+		var div = document.createElement('div');
+		div.addEventListener('foo', function (e) {
+		});
+		function fire () {
+			var e = document.createEvent('Event');
+			e.initEvent('foo', true, false);
+			div.dispatchEvent(e);
+		}
+		fire();
+		JSLitmus.test('Regular Event Dispatch', function (count) {
+			while (count--) {
+				fire();
+			}
+		});
+	})();
 });

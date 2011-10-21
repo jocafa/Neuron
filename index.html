@@ -26,7 +26,7 @@
 					return trivialReporter.specFilter(spec);
 				};
 
-				curl(['test', 'bench'], function () {
+				curl(['Neuron.test', 'Model.test'], function () {
 					jasmineEnv.execute();
 				});
 			})();
