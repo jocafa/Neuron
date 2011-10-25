@@ -184,8 +184,10 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 	})();
 
 	(function () {
+		var fired = 0;
 		var div = document.createElement('div');
 		div.addEventListener('foo', function (e) {
+			fired++;
 		});
 		function fire () {
 			var e = document.createEvent('Event');

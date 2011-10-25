@@ -13,26 +13,16 @@ define(['Impulse'], function (Impulse) {
 			hasPostMessage = !!window.postMessage,
 			messageName = 'impulse';
 
-		var trigger = (function () {
-			return hasPostMessage
-				? function trigger () {
-					window.postMessage(messageName, '*');
-				}
-				: function trigger () {
-					setTimeout(function () { processQueue()}, 0);
-				};
-		})();
+		function trigger () {
+			window.postMessage(messageName, '*');
+		};
 
-		var processQueue = (function () {
-			return hasPostMessage
-				? function processQueue (event) {
-					if (event.source === window && event.data === messageName) {
-						event.stopPropagation();
-						flushQueue();
-					}
-				}
-				: flushQueue;
-		})();
+		function processQueue (event) {
+			if (event.source === window && event.data === messageName) {
+				event.stopPropagation();
+				flushQueue();
+			}
+		}
 
 		function flushQueue () {
 			while (fn = queue.shift()) {
@@ -48,7 +38,7 @@ define(['Impulse'], function (Impulse) {
 			trigger();
 		}
 
-		if (hasPostMessage) window.addEventListener('message', processQueue, true);
+		window.addEventListener('message', processQueue, true);
 
 		nextTick.removeListener = function () {
 			window.removeListener('message', processQueue, true);
