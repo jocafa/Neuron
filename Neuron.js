@@ -2,6 +2,61 @@
 define(['Impulse'], function (Impulse) {
 	var cid = 0;
 
+	// nextTick taken from https://github.com/substack/node-browserify/pull/77
+	var nextTick = (function () {
+		if (typeof process != 'undefined' && typeof process.nextTick === 'function') return process.nextTick;
+
+		var
+			queue = [],
+			dirty = false,
+			fn,
+			hasPostMessage = !!window.postMessage,
+			messageName = 'impulse';
+
+		var trigger = (function () {
+			return hasPostMessage
+				? function trigger () {
+					window.postMessage(messageName, '*');
+				}
+				: function trigger () {
+					setTimeout(function () { processQueue()}, 0);
+				};
+		})();
+
+		var processQueue = (function () {
+			return hasPostMessage
+				? function processQueue (event) {
+					if (event.source === window && event.data === messageName) {
+						event.stopPropagation();
+						flushQueue();
+					}
+				}
+				: flushQueue;
+		})();
+
+		function flushQueue () {
+			while (fn = queue.shift()) {
+				fn();
+			}
+			dirty = false;
+		}
+
+		function nextTick (fn) {
+			queue.push(fn);
+			if (dirty) return;
+			dirty = true;
+			trigger();
+		}
+
+		if (hasPostMessage) window.addEventListener('message', processQueue, true);
+
+		nextTick.removeListener = function () {
+			window.removeListener('message', processQueue, true);
+		};
+
+		return nextTick;
+	})();
+
 	function __bind (fn, obj) {
 		return function () {
 			return fn.apply(obj, arguments);
@@ -40,7 +95,7 @@ define(['Impulse'], function (Impulse) {
 					var synapse = this.axonTerminals[synapses[i]];
 					impulse.log[synapses[i]] = true;
 					(function (rk, syn, imp) {
-						setTimeout(function () {
+						nextTick(function () {
 							syn[responderKey](imp);
 							if (imp.active) {
 								syn.emit(imp);
