@@ -2,7 +2,10 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 	function Model (data) {
 		data = data || {};
 		Neuron.call(this);
-		this.fields = {};
+		Object.defineProperty(this, '', {
+			value: {},
+			enumerable: false
+		});
 
 		for (var key in data) if (data.hasOwnProperty(key)) {
 			this[key] = data[key];
@@ -12,10 +15,12 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 	Model.prototype = new Neuron;
 	Model.prototype.constructor = Model;
 
+	
+
 	Model.prototype.toJSON = function () {
 		var obj = {};
 
-		for (var k in this.fields) if (this.fields.hasOwnProperty(k)) {
+		for (var k in this['']) if (this[''].hasOwnProperty(k)) {
 			obj[k] = this[k];
 		}
 
@@ -31,7 +36,7 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 		Object.defineProperty(cls.prototype, field, (function () {
 			return {
 				get: dfn.get || function fieldGetter () {
-					return this.fields[field] || dfn.defaultVaule;
+					return this[''][field] || dfn.defaultVaule;
 				},
 
 				set: function fieldSetter (newValue) {
@@ -46,8 +51,8 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 						}
 					}
 
-					var oldValue = this.fields[field] || dfn.def;
-					this.fields[field] = dfn.setter ? dfn.setter(newValue) : newValue;
+					var oldValue = this[''][field] || dfn.def;
+					this[''][field] = dfn.setter ? dfn.setter(newValue) : newValue;
 					this.emit(new Impulse('change', {
 						field: field,
 						oldValue: oldValue,

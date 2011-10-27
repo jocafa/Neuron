@@ -10,7 +10,6 @@ define(['Model'], function (Model) {
 			Thing.prototype.constructor = Thing;
 
 			var t = new Thing;
-			console.log(t.toString());
 
 			it('should be an instance of Thing', function () {
 				expect(t instanceof Thing).toBe(true);
@@ -48,6 +47,7 @@ define(['Model'], function (Model) {
 			it('should fire a change event when setting a value', function () {
 				var a = new Thing, b = new Thing;
 				a.influence(b);
+				console.log(Object.keys(a));
 				spyOn(b, 'respondToChange').andCallThrough();
 				runs(function () {
 					a.something = true;
@@ -80,7 +80,7 @@ define(['Model'], function (Model) {
 			Thing.prototype.constructor = Thing;
 			Model.defineField(Thing, 'something', {
 				get: function () {
-					return 'got-' + this.fields.something;
+					return 'got-' + this[''].something;
 				}
 			});
 
