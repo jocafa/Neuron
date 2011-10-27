@@ -58,7 +58,9 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 						oldValue: oldValue,
 						newValue: newValue
 					}));
-				}
+				},
+
+				enumerable: true
 			}
 		})());
 	};
