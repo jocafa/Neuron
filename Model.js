@@ -41,13 +41,20 @@ define(['Impulse', 'Neuron'], function (Impulse, Neuron) {
 
 				set: function fieldSetter (newValue) {
 					if (dfn.type && ! newValue instanceof dfn.type) {
-						throw new TypeError("Can't set value of " + field + " to a " + Object.getPrototypeOf(newValue).constructor.name + ". It must be a " + dfn.type.name + ".");
+						throw new TypeError(
+							"Can't set value of " + field + " to a " +
+							Object.getPrototypeOf(newValue).constructor.name +
+							". It must be a " + dfn.type.name + "."
+						);
 					}
 
 					if (dfn.vet) {
 						var vetResult = dfn.vet(newValue);
 						if (vetResult) {
-							throw new TypeError("Error setting " + field + " to " + newValue + ". " + vetResult);
+							throw new TypeError(
+								"Error setting " + field + " to " + newValue +
+								". " + vetResult
+							);
 						}
 					}
 

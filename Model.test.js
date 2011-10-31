@@ -47,11 +47,6 @@ define(['Model'], function (Model) {
 			it('should fire a change event when setting a value', function () {
 				var a = new Thing, b = new Thing;
 				a.influence(b);
-
-				for (var k in a) {
-					console.log("key is [" + k + "]");
-				}
-
 				spyOn(b, 'respondToChange').andCallThrough();
 				runs(function () {
 					a.something = true;
